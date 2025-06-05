@@ -14,8 +14,8 @@
 #endif
 
 #define ROOM_WIDTH 10
-#define HME_POS 1
-#define BWL_PO (ROOM_WIDTH - 2)
+#define HME_POS 0
+#define BWL_PO (ROOM_WIDTH - 1)
 
 int RollDice() { return rand() % 6 + 1; }
 
@@ -32,27 +32,45 @@ void intro(char *CatName) {
   printf("야옹이의 이름을 지어주세요:");
   scanf("%s", CatName);
   printf("야옹이의 이름은 %s입니다.\n", CatName);
+  sleep(2);
+  system(CLEAR_CONSOLE);
 }
 
-void states(int SoupCount, int Relationship) {
-  printf("==================== 현재 상태 ====================\n");
+void states(int SoupCount, int Relationship, int CP, int CF, char *CatName) {
+  printf("\n\n==================== 현재 상태 ====================\n");
   printf("현재까지 만든 수프: %d개\n", SoupCount);
+  printf("CP : %d 포인트\n", CP);
+  printf("%s이 기분(0~3): %d\n", CatName, CF);
+  switch (CF) {
+    case 0:
+      printf("  기분이 매우 나쁩니다.\n");
+      break;
+    case 1:
+      printf("  심심해합니다.\n");
+      break;
+    case 2:
+      printf("  식빵을 굽습니다.\n");
+      break;
+    case 3:
+      printf("  골골송을 부릅니다.\n");
+      break;
+  }
   printf("집사와의 관계(0~4): %d\n", Relationship);
   switch (Relationship) {
     case 0:
-      printf("곁에 오는 것조차 싫어합니다.\n");
+      printf("  곁에 오는 것조차 싫어합니다.\n");
       break;
     case 1:
-      printf("간식 자판기 취급입니다.\n");
+      printf("  간식 자판기 취급입니다.\n");
       break;
     case 2:
-      printf("그럭저럭 쓸 만한 집사입니다.\n");
+      printf("  그럭저럭 쓸 만한 집사입니다.\n");
       break;
     case 3:
-      printf("훌륭한 집사로 인정 받고 있습니다.\n");
+      printf("  훌륭한 집사로 인정 받고 있습니다.\n");
       break;
     case 4:
-      printf("집사 껌딱지입니다.\n");
+      printf("  집사 껌딱지입니다.\n");
       break;
   }
   printf("=================================================\n");
@@ -90,6 +108,8 @@ void interaction(char *CatName, int *Relationship) {
     }
     printf("현재 친밀도 : %d\n", *Relationship);
   }
+  sleep(2);
+  system(CLEAR_CONSOLE);
 }
 
 void CatRoom(int CatPosition, int *SoupCount, char *CatName) {
@@ -143,36 +163,31 @@ void CatRoom(int CatPosition, int *SoupCount, char *CatName) {
   }
 }
 
-void Catmove(int *CatPosition, int Relationship, char *CatName) {
-  printf("\n%s 이동: 집사와 친밀할수록 냄비 쪽으로 갈 확률이 높아집니다.\n",
-         CatName);
-  printf("주사위 눈이 %d 이상이면 냄비 쪽으로 이동합니다.\n", 6 - Relationship);
+void Catmove(int Relationship, int *CF, char *CatName) {
+  printf("6-2: 주사위 눈이 %d이하면 그냥 기분이 나빠집니다.\n",
+         6 - Relationship);
   printf("주사위를 굴립니다. 또르륵...\n");
   int dice = RollDice();
   sleep(1);
   printf("%d이(가) 나왔습니다!\n", dice);
-  if (dice >= 6 - Relationship && *CatPosition < ROOM_WIDTH - 1) {
-    (*CatPosition)++;
-    printf("냄비 쪽으로 움직입니다.\n");
-  } else if (*CatPosition > 0) {
-    (*CatPosition)--;
-    printf("집 쪽으로 움직입니다.\n");
-  } else {
-    printf("야옹이는 움직이지 않았습니다.\n");
+  if (dice >= 6 - Relationship) {
+    printf("%s의 기분이 나빠집니다: %d->", CatName, *CF);
+    (*CF)--;
+    printf("%d\n", *CF);
   }
 }
 
 int main(void) {
   char CatName[10];
-  int SoupCount = 0, Relationship = 2, CatPosition = 0;
+  int SoupCount = 0, Relationship = 2, CatPosition = 0, CP = 0, CF = 3;
   srand((unsigned int)time(NULL));
   intro(CatName);
-  sleep(2);
-  system(CLEAR_CONSOLE);
   while (1) {
-    states(SoupCount, Relationship);
-    Catmove(&CatPosition, Relationship, CatName);
+    states(SoupCount, Relationship, CP, CF, CatName);
+    Catmove(Relationship, &CF, CatName);
+    printf("\n");
     CatRoom(CatPosition, &SoupCount, CatName);
+    printf("\n");
     interaction(CatName, &Relationship);
     sleep(1);
     system(CLEAR_CONSOLE);
