@@ -36,7 +36,7 @@ void intro(char *CatName) {
   printf("    \\)()-())\n\n");
   printf("\n\n");
   printf("야옹이의 이름을 지어주세요:");
-  scanf("%s", CatName);
+  scanf_s("%s", CatName, 10);
   printf("야옹이의 이름은 %s입니다.\n", CatName);
   sleep(2);
   system(CLEAR_CONSOLE);
@@ -143,7 +143,7 @@ void interaction(char *CatName, int *Relationship) {
     menu_idx = 3;
   }
   printf(">>");
-  scanf("%d", &choice);
+  scanf_s("%d", &choice);
   if (choice < 0 || choice >= menu_idx) {
     printf("잘못된 입력입니다.\n");
     sleep(2);
@@ -200,8 +200,6 @@ void interaction(char *CatName, int *Relationship) {
 
 void CatRoom(int CatPosition, int *SoupCount, char *CatName, int CatTowerPos,
              int ScratcherPos) {
-  // extern int CatTower;
-  // extern int Scratcher;
   for (int i = 0; i < ROOM_WIDTH + 2; i++) {
     printf("#");
   }
@@ -310,7 +308,7 @@ void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
     printf("3. 스크래처: 4 CP%s\n", *Scratcher ? " (품절)" : "");
     printf("4. 캣 타워: 6CP%s\n", *CatTower ? " (품절)" : "");
     printf(">> ");
-    scanf("%d", &buy);
+    scanf_s("%d", &buy);
 
     if (buy < 0 || buy > 4) {
       printf("잘못된 입력입니다. 다시 입력해주세요.\n");
@@ -389,7 +387,7 @@ void sudden_quest(char *CatName, int *CP) {
   printf("1~10 사이에 간식이 숨겨져 있습니다. 맞출 때까지 입력하세요!\n");
   while (1) {
     printf("어디에 숨었을까요? >> ");
-    scanf("%d", &answer);
+    scanf_s("%d", &answer);
     tries++;
     if (answer == correct) {
       printf("정답! %d번에 간식이 있었습니다! (%d번 만에 성공)\n", correct,
