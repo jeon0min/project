@@ -298,7 +298,6 @@ void Catmove(int *CatPosition, int Relationship, int *CF, char *CatName,
 void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
           int *CatTower, int *ScratcherPos, int *CatTowerPos) {
   int buy = -1;
-  int bought = 0;
   while (1) {
     printf("상점에서 물건을 살 수 있습니다.\n");
     printf("어떤 물건을 구매할까요?\n");
@@ -326,8 +325,8 @@ void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
         *MouseToy = 1;
         printf("장난감 쥐를 구매했습니다.\n");
         printf("보유CP %d 포인트\n", *CP);
-        break;
       }
+      break;
     } else if (buy == 2) {
       if (*RazerPointer) {
         printf("레이저 포인터를 이미구매했습니다.\n");
@@ -338,8 +337,8 @@ void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
         *RazerPointer = 1;
         printf("레이저 포인터를 구매했습니다.\n");
         printf("보유CP %d 포인트\n", *CP);
-        break;
       }
+      break;
     } else if (buy == 3) {
       if (*Scratcher) {
         printf("스크래처를 이미구매했습니다.\n");
@@ -352,12 +351,12 @@ void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
         do {
           pos = rand() % ROOM_WIDTH;
         } while (pos == HME_POS || pos == BWL_PO ||
-                 (CatTower && pos == *CatTowerPos));
+                 (*CatTower && pos == *CatTowerPos));
         *ScratcherPos = pos;
         printf("스크래처를 구매했습니다.\n");
         printf("보유CP %d 포인트\n", *CP);
-        break;
       }
+      break;
     } else if (buy == 4) {
       if (*CatTower) {
         printf("캣 타워를 이미구매했습니다.\n");
@@ -370,12 +369,12 @@ void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
         do {
           pos = rand() % ROOM_WIDTH;
         } while (pos == HME_POS || pos == BWL_PO ||
-                 (Scratcher && pos == *ScratcherPos));
+                 (*Scratcher && pos == *ScratcherPos));
         *CatTowerPos = pos;
         printf("캣 타워를 구매했습니다.\n");
         printf("보유CP %d 포인트\n", *CP);
-        break;
       }
+      break;
     }
   }
 }
