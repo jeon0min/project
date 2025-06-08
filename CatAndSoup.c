@@ -192,6 +192,25 @@ void Catmove(int *CatPosition, int Relationship, int *CF, char *CatName) {
   }
 }
 
+void CatAction(int CatPosition, int *CF, int *CP, char *CatName) {
+  if (CatPosition == HME_POS) {
+    if (*CF < 3) {
+      (*CF)++;
+      printf("%s은(는) 집에서 쉬며 기분이 조금 나아졌습니다. 기분: %d\n",
+             CatName, *CF);
+    } else {
+      printf("%s은(는) 집에서 쉬고 있습니다. 기분은 이미 최고입니다.\n",
+             CatName);
+    }
+  } else if (CatPosition == ROOM_WIDTH / 2) {
+    printf("%s은(는) 스크래처를 긁으며 기분 전환을 시도합니다.\n", CatName);
+    if (*CF < 3) (*CF)++;
+  } else if (CatPosition == ROOM_WIDTH / 2 + 1) {
+    printf("%s은(는) 캣타워에서 놉니다. CP가 +1 증가합니다.\n", CatName);
+    (*CP)++;
+  }
+}
+
 int main(void) {
   char CatName[10];
   int SoupCount = 0, Relationship = 2, CatPosition = 0, CP = 0, CF = 3;
@@ -203,6 +222,7 @@ int main(void) {
     printf("\n");
     CatRoom(CatPosition, &SoupCount, CatName);
     printf("\n");
+    CatAction(CatPosition, &CF, &CP, CatName);
     interaction(CatName, &Relationship);
     sleep(1);
     system(CLEAR_CONSOLE);
