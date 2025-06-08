@@ -382,11 +382,37 @@ void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
   }
 }
 
+void sudden_quest(char *CatName, int *CP) {
+  int answer, tries = 0;
+  int correct = rand() % 10 + 1;
+  printf("\n[돌발 퀘스트] %s가 갑자기 숨은 간식을 찾으려고 합니다!\n", CatName);
+  printf("1~10 사이에 간식이 숨겨져 있습니다. 맞출 때까지 입력하세요!\n");
+  while (1) {
+    printf("어디에 숨었을까요? >> ");
+    scanf("%d", &answer);
+    tries++;
+    if (answer == correct) {
+      printf("정답! %d번에 간식이 있었습니다! (%d번 만에 성공)\n", correct,
+             tries);
+      printf("보상으로 CP 2포인트를 얻었습니다!\n");
+      *CP += 2;
+      break;
+    } else if (answer < correct) {
+      printf("더 높은 번호에 있습니다!\n");
+    } else {
+      printf("더 낮은 번호에 있습니다!\n");
+    }
+  }
+  sleep(2);
+  system(CLEAR_CONSOLE);
+}
+
 int main(void) {
   char CatName[10];
   int SoupCount = 0, Relationship = 2, CatPosition = 0, CP = 0;
   int CatTowerPos, ScratcherPos;
   int prevCatPosition = HME_POS;
+  int turn = 0;
   srand((unsigned int)time(NULL));
   do {
     CatTowerPos = rand() % ROOM_WIDTH;
@@ -397,9 +423,11 @@ int main(void) {
            ScratcherPos == CatTowerPos);
   intro(CatName);
   while (1) {
+    turn++;
     int producedCP = (CF > 1 ? CF - 1 : 0) + Relationship;
     CP += producedCP;
     states(SoupCount, Relationship, CP, CF, CatName, producedCP);
+    if (turn == 3) sudden_quest(CatName, &CP);
     shop(&CP, &MouseToy, &RazerPointer, &Scratcher, &CatTower, &ScratcherPos,
          &CatTowerPos);
     Catmove(&CatPosition, Relationship, &CF, CatName, Scratcher, CatTower);
