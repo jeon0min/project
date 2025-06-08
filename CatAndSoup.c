@@ -22,6 +22,8 @@ int RollDice() { return rand() % 6 + 1; }
 int MouseToy = 0;
 int RazerPointer = 0;
 int CF = 3;
+int CatTower = 0;
+int Scratcher = 0;
 
 void intro(char *CatName) {
   printf("**** 야옹이와 수프****\n");
@@ -88,7 +90,6 @@ void CatAction(int CatPosition, int *CF, int *CP, char *CatName,
                int CatTowerPos, int ScratcherPos, int *prevCatPosition) {
   if (CatPosition == HME_POS) {
     if (*prevCatPosition != HME_POS) {
-      // 집에 들어온 직후에는 아무 행동 없음
     } else {
       if (*CF < 3) {
         int before = *CF;
@@ -199,6 +200,8 @@ void interaction(char *CatName, int *Relationship) {
 
 void CatRoom(int CatPosition, int *SoupCount, char *CatName, int CatTowerPos,
              int ScratcherPos) {
+  // extern int CatTower;
+  // extern int Scratcher;
   for (int i = 0; i < ROOM_WIDTH + 2; i++) {
     printf("#");
   }
@@ -208,9 +211,9 @@ void CatRoom(int CatPosition, int *SoupCount, char *CatName, int CatTowerPos,
       printf("H");
     } else if (i == BWL_PO) {
       printf("B");
-    } else if (i == CatTowerPos) {
+    } else if (CatTower && i == CatTowerPos) {
       printf("T");
-    } else if (i == ScratcherPos) {
+    } else if (Scratcher && i == ScratcherPos) {
       printf("S");
     } else {
       printf(" ");
@@ -294,11 +297,94 @@ void Catmove(int *CatPosition, int Relationship, int *CF, char *CatName,
   }
 }
 
+void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
+          int *CatTower, int *ScratcherPos, int *CatTowerPos) {
+  int buy = -1;
+  int bought = 0;
+  while (1) {
+    printf("상점에서 물건을 살 수 있습니다.\n");
+    printf("어떤 물건을 구매할까요?\n");
+    printf("0. 아무것도 사지 않는다.\n");
+    printf("1. 장난감 쥐 : 1CP%s\n", *MouseToy ? " (품절)" : "");
+    printf("2. 레이저 포인터 : 2CP%s\n", *RazerPointer ? " (품절)" : "");
+    printf("3. 스크래처: 4 CP%s\n", *Scratcher ? " (품절)" : "");
+    printf("4. 캣 타워: 6CP%s\n", *CatTower ? " (품절)" : "");
+    printf(">> ");
+    scanf("%d", &buy);
+
+    if (buy < 0 || buy > 4) {
+      printf("잘못된 입력입니다. 다시 입력해주세요.\n");
+      continue;
+    }
+    if (buy == 0) break;
+
+    if (buy == 1) {
+      if (*MouseToy) {
+        printf("장난감 쥐를 이미구매했습니다.\n");
+      } else if (*CP < 1) {
+        printf("CP가 부족합니다.\n");
+      } else {
+        (*CP) -= 1;
+        *MouseToy = 1;
+        printf("장난감 쥐를 구매했습니다.\n");
+        printf("보유CP %d 포인트\n", *CP);
+        break;
+      }
+    } else if (buy == 2) {
+      if (*RazerPointer) {
+        printf("레이저 포인터를 이미구매했습니다.\n");
+      } else if (*CP < 2) {
+        printf("CP가 부족합니다.\n");
+      } else {
+        (*CP) -= 2;
+        *RazerPointer = 1;
+        printf("레이저 포인터를 구매했습니다.\n");
+        printf("보유CP %d 포인트\n", *CP);
+        break;
+      }
+    } else if (buy == 3) {
+      if (*Scratcher) {
+        printf("스크래처를 이미구매했습니다.\n");
+      } else if (*CP < 4) {
+        printf("CP가 부족합니다.\n");
+      } else {
+        (*CP) -= 4;
+        *Scratcher = 1;
+        int pos;
+        do {
+          pos = rand() % ROOM_WIDTH;
+        } while (pos == HME_POS || pos == BWL_PO ||
+                 (CatTower && pos == *CatTowerPos));
+        *ScratcherPos = pos;
+        printf("스크래처를 구매했습니다.\n");
+        printf("보유CP %d 포인트\n", *CP);
+        break;
+      }
+    } else if (buy == 4) {
+      if (*CatTower) {
+        printf("캣 타워를 이미구매했습니다.\n");
+      } else if (*CP < 6) {
+        printf("CP가 부족합니다.\n");
+      } else {
+        (*CP) -= 6;
+        *CatTower = 1;
+        int pos;
+        do {
+          pos = rand() % ROOM_WIDTH;
+        } while (pos == HME_POS || pos == BWL_PO ||
+                 (Scratcher && pos == *ScratcherPos));
+        *CatTowerPos = pos;
+        printf("캣 타워를 구매했습니다.\n");
+        printf("보유CP %d 포인트\n", *CP);
+        break;
+      }
+    }
+  }
+}
+
 int main(void) {
   char CatName[10];
   int SoupCount = 0, Relationship = 2, CatPosition = 0, CP = 0;
-  int CatTower = 0;
-  int Scratcher = 0;
   int CatTowerPos, ScratcherPos;
   int prevCatPosition = HME_POS;
   srand((unsigned int)time(NULL));
@@ -314,6 +400,8 @@ int main(void) {
     int producedCP = (CF > 1 ? CF - 1 : 0) + Relationship;
     CP += producedCP;
     states(SoupCount, Relationship, CP, CF, CatName, producedCP);
+    shop(&CP, &MouseToy, &RazerPointer, &Scratcher, &CatTower, &ScratcherPos,
+         &CatTowerPos);
     Catmove(&CatPosition, Relationship, &CF, CatName, Scratcher, CatTower);
     printf("\n");
     CatRoom(CatPosition, &SoupCount, CatName, CatTowerPos, ScratcherPos);
