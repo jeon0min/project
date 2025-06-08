@@ -176,10 +176,19 @@ void Catmove(int *CatPosition, int Relationship, int *CF, char *CatName) {
     printf("%s의 기분이 나빠집니다: %d->", CatName, *CF);
     if (*CF > 0) {
       (*CF)--;
-      printf("%d", *CF);
+      printf("%d\n", *CF);
     } else {
-      printf("더이상 기분이 나빠질수가 없습니다.");
+      printf("더이상 기분이 나빠질수가 없습니다.\n");
     }
+  }
+  if (*CF == 0) {
+    printf("기분이 매우 나쁜 %s은(는) 집으로 향합니다.\n", CatName);
+  } else if (*CF == 1) {
+    printf("%s은(는) 심심해서 스크래처 쪽으로 이동합니다.\n", CatName);
+  } else if (*CF == 2) {
+    printf("%s은(는) 기분좋게 식빵을 굽고 있습니다.\n", CatName);
+  } else if (*CF == 3) {
+    printf("%s은(는) 골골송을 부르며 수프를 만들러 갑니다.\n", CatName);
   }
 }
 
