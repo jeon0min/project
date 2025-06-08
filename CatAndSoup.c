@@ -19,6 +19,9 @@
 
 int RollDice() { return rand() % 6 + 1; }
 
+int MouseToy = 0;
+int RazerPointer = 0;
+
 void intro(char *CatName) {
   printf("**** 야옹이와 수프****\n");
   printf("      /\\_/\\\n");
@@ -74,19 +77,34 @@ void states(int SoupCount, int Relationship, int CP, int CF, char *CatName,
       printf("  집사 껌딱지입니다.\n");
       break;
   }
-  // CP 생산량 출력
   printf("%s의 기분과 친밀도에 따라서 CP가 %d포인트 생산 되었습니다.\n",
          CatName, lastProducedCP);
   printf("=================================================\n");
   printf("\n\n");
 }
 
+void CatAction(int CatPosition, int *CF, int *CP, char *CatName) {
+  if (CatPosition == HME_POS) {
+    if (*CF < 3) {
+      (*CF)++;
+      printf("%s은(는) 집에서 쉬며 기분이 조금 나아졌습니다. 기분: %d\n",
+             CatName, *CF);
+    } else {
+      printf("%s은(는) 집에서 쉬고 있습니다. 기분은 이미 최고입니다.\n",
+             CatName);
+    }
+  } else if (CatPosition == ROOM_WIDTH / 2) {
+    printf("%s은(는) 스크래처를 긁으며 기분 전환을 시도합니다.\n", CatName);
+    if (*CF < 3) (*CF)++;
+  } else if (CatPosition == ROOM_WIDTH / 2 + 1) {
+    printf("%s은(는) 캣타워에서 놉니다. CP가 +1 증가합니다.\n", CatName);
+    (*CP)++;
+  }
+}
+
 void interaction(char *CatName, int *Relationship) {
   int choice;
   int dice = RollDice();
-  // main에서 선언된 MouseToy, RazerPointer 사용
-  extern int MouseToy;
-  extern int RazerPointer;
   int menu_idx = 2;
   int menu_map[4];
   printf("어떤 상호작용을 하시겠습니까?\n");
@@ -94,15 +112,20 @@ void interaction(char *CatName, int *Relationship) {
   menu_map[0] = 0;
   printf("  1. 긁어 주기\n");
   menu_map[1] = 1;
-  if (MouseToy) {
-    printf("  %d. 장난감 쥐로 놀아주기\n", menu_idx);
-    menu_map[menu_idx] = 2;
-    menu_idx++;
-  }
-  if (RazerPointer) {
-    printf("  %d. 레이저로 포인터로 놀아 주기\n", menu_idx);
-    menu_map[menu_idx] = 3;
-    menu_idx++;
+  if (MouseToy == 1 && RazerPointer == 1) {
+    printf("  2. 장난감 쥐로 놀아주기\n");
+    menu_map[2] = 2;
+    printf("  3. 레이저로 포인터로 놀아 주기\n");
+    menu_map[3] = 3;
+    menu_idx = 4;
+  } else if (MouseToy == 1) {
+    printf("  2. 장난감 쥐로 놀아주기\n");
+    menu_map[2] = 2;
+    menu_idx = 3;
+  } else if (RazerPointer == 1) {
+    printf("  2. 레이저로 포인터로 놀아 주기\n");
+    menu_map[2] = 3;
+    menu_idx = 3;
   }
   printf(">>");
   scanf("%d", &choice);
@@ -138,11 +161,9 @@ void interaction(char *CatName, int *Relationship) {
     }
     printf("현재 친밀도 : %d\n", *Relationship);
   } else if (action == 2) {
-    printf("%s와(과) 장난감 쥐로 놀아주었습니다! (추가 효과 구현 필요)\n", CatName);
-    // ...추가 효과 구현...
+    printf("%s와(과) 장난감 쥐로 놀아주었습니다!\n", CatName);
   } else if (action == 3) {
-    printf("%s와(과) 레이저 포인터로 놀아주었습니다! (추가 효과 구현 필요)\n", CatName);
-    // ...추가 효과 구현...
+    printf("%s와(과) 레이저 포인터로 놀아주었습니다!\n", CatName);
   }
   sleep(2);
   system(CLEAR_CONSOLE);
@@ -245,32 +266,11 @@ void Catmove(int *CatPosition, int Relationship, int *CF, char *CatName,
   }
 }
 
-void CatAction(int CatPosition, int *CF, int *CP, char *CatName) {
-  if (CatPosition == HME_POS) {
-    if (*CF < 3) {
-      (*CF)++;
-      printf("%s은(는) 집에서 쉬며 기분이 조금 나아졌습니다. 기분: %d\n",
-             CatName, *CF);
-    } else {
-      printf("%s은(는) 집에서 쉬고 있습니다. 기분은 이미 최고입니다.\n",
-             CatName);
-    }
-  } else if (CatPosition == ROOM_WIDTH / 2) {
-    printf("%s은(는) 스크래처를 긁으며 기분 전환을 시도합니다.\n", CatName);
-    if (*CF < 3) (*CF)++;
-  } else if (CatPosition == ROOM_WIDTH / 2 + 1) {
-    printf("%s은(는) 캣타워에서 놉니다. CP가 +1 증가합니다.\n", CatName);
-    (*CP)++;
-  }
-}
-
 int main(void) {
   char CatName[10];
   int SoupCount = 0, Relationship = 2, CatPosition = 0, CP = 0, CF = 3;
   int CatTower = 0;
   int Scratcher = 0;
-  int MouseToy = 0;
-  int RazerPointer = 0;
   int CatTowerPos, ScratcherPos;
   srand((unsigned int)time(NULL));
   do {
