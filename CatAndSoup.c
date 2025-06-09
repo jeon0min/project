@@ -25,418 +25,453 @@ int CF = 3;
 int CatTower = 0;
 int Scratcher = 0;
 
-void intro(char *CatName) {
-  printf("**** ì•¼ì˜¹ì´ì™€ ìˆ˜í”„****\n");
-  printf("      /\\_/\\\n");
-  printf(" /\\  / o o \\\n");
-  printf("//\\\\ \\~(*)~/\n");
-  printf("`  \\/   ^ /\n");
-  printf("   | \\|| ||\n");
-  printf("   \\ '|| ||\n");
-  printf("    \\)()-())\n\n");
-  printf("\n\n");
-  printf("ì•¼ì˜¹ì´ì˜ ì´ë¦„ì„ ì§€ì–´ì£¼ì„¸ìš”:");
-  scanf_s("%s", CatName, 10);
-  printf("ì•¼ì˜¹ì´ì˜ ì´ë¦„ì€ %sì…ë‹ˆë‹¤.\n", CatName);
-  sleep(2);
-  system(CLEAR_CONSOLE);
-}
-
-void states(int SoupCount, int Relationship, int CP, int CF, char *CatName,
-            int lastProducedCP) {
-  printf("\n\n==================== í˜„ì¬ ìƒíƒœ ====================\n");
-  printf("í˜„ì¬ê¹Œì§€ ë§Œë“  ìˆ˜í”„: %dê°œ\n", SoupCount);
-  printf("ë³´ìœ  CP : %d í¬ì¸íŠ¸\n", CP);
-  printf("%sì´ ê¸°ë¶„(0~3): %d\n", CatName, CF);
-  switch (CF) {
-    case 0:
-      printf("  ê¸°ë¶„ì´ ë§¤ìš° ë‚˜ì©ë‹ˆë‹¤.\n");
-      break;
-    case 1:
-      printf("  ì‹¬ì‹¬í•´í•©ë‹ˆë‹¤.\n");
-      break;
-    case 2:
-      printf("  ì‹ë¹µì„ êµ½ìŠµë‹ˆë‹¤.\n");
-      break;
-    case 3:
-      printf("  ê³¨ê³¨ì†¡ì„ ë¶€ë¦…ë‹ˆë‹¤.\n");
-      break;
-  }
-  printf("ì§‘ì‚¬ì™€ì˜ ê´€ê³„(0~4): %d\n", Relationship);
-  switch (Relationship) {
-    case 0:
-      printf("  ê³ì— ì˜¤ëŠ” ê²ƒì¡°ì°¨ ì‹«ì–´í•©ë‹ˆë‹¤.\n");
-      break;
-    case 1:
-      printf("  ê°„ì‹ ìíŒê¸° ì·¨ê¸‰ì…ë‹ˆë‹¤.\n");
-      break;
-    case 2:
-      printf("  ê·¸ëŸ­ì €ëŸ­ ì“¸ ë§Œí•œ ì§‘ì‚¬ì…ë‹ˆë‹¤.\n");
-      break;
-    case 3:
-      printf("  í›Œë¥­í•œ ì§‘ì‚¬ë¡œ ì¸ì • ë°›ê³  ìˆìŠµë‹ˆë‹¤.\n");
-      break;
-    case 4:
-      printf("  ì§‘ì‚¬ ê»Œë”±ì§€ì…ë‹ˆë‹¤.\n");
-      break;
-  }
-  printf("%sì˜ ê¸°ë¶„ê³¼ ì¹œë°€ë„ì— ë”°ë¼ì„œ CPê°€ %dí¬ì¸íŠ¸ ìƒì‚° ë˜ì—ˆìŠµë‹ˆë‹¤.\n",
-         CatName, lastProducedCP);
-  printf("=================================================\n");
-  printf("\n\n");
-}
-
-void CatAction(int CatPosition, int *CF, int *CP, char *CatName,
-               int CatTowerPos, int ScratcherPos, int *prevCatPosition) {
-  if (CatPosition == HME_POS) {
-    if (*prevCatPosition != HME_POS) {
-    } else {
-      if (*CF < 3) {
-        int before = *CF;
-        (*CF)++;
-        printf("%sì€(ëŠ”) ì§‘ì—ì„œ ì‰¬ë©° ê¸°ë¶„ì´ ì¡°ê¸ˆ ë‚˜ì•„ì¡ŒìŠµë‹ˆë‹¤. ê¸°ë¶„: %d->%d\n",
-               CatName, before, *CF);
-      } else {
-        printf("%sì€(ëŠ”) ì§‘ì—ì„œ ì‰¬ê³  ìˆìŠµë‹ˆë‹¤. ê¸°ë¶„ì€ ì´ë¯¸ ìµœê³ ì…ë‹ˆë‹¤.\n",
-               CatName);
-      }
-    }
-  } else if (CatPosition == ScratcherPos) {
-    int before = *CF;
-    if (*CF < 3) (*CF)++;
-    printf("%sì€(ëŠ”) ìŠ¤í¬ë˜ì²˜ë¥¼ ê¸ê³  ë†€ì•˜ìŠµë‹ˆë‹¤.\n", CatName);
-    printf("ê¸°ë¶„ì´ ì¡°ê¸ˆ ì¢‹ì•„ì¡ŒìŠµë‹ˆë‹¤: %d->%d\n", before, *CF);
-  } else if (CatPosition == CatTowerPos) {
-    int before = *CF;
-    int after = *CF + 2;
-    if (after > 3) after = 3;
-    printf("%sì€(ëŠ”) ìº£íƒ€ì›Œë¥¼ ë›°ì–´ë‹¤ë‹™ë‹ˆë‹¤.\n", CatName);
-    printf("ê¸°ë¶„ì´ ì œë²• ì¢‹ì•„ì¡ŒìŠµë‹ˆë‹¤: %d->%d\n", before, after);
-    *CF = after;
-  }
-  *prevCatPosition = CatPosition;
-}
-
-void interaction(char *CatName, int *Relationship) {
-  int choice;
-  int dice = RollDice();
-  int menu_idx = 2;
-  int menu_map[4];
-  printf("ì–´ë–¤ ìƒí˜¸ì‘ìš©ì„ í•˜ì‹œê² ìŠµë‹ˆê¹Œ?\n");
-  printf("  0. ì•„ë¬´ê²ƒë„ í•˜ì§€ ì•ŠìŒ\n");
-  menu_map[0] = 0;
-  printf("  1. ê¸ì–´ ì£¼ê¸°\n");
-  menu_map[1] = 1;
-  if (MouseToy == 1 && RazerPointer == 1) {
-    printf("  2. ì¥ë‚œê° ì¥ë¡œ ë†€ì•„ì£¼ê¸°\n");
-    menu_map[2] = 2;
-    printf("  3. ë ˆì´ì €ë¡œ í¬ì¸í„°ë¡œ ë†€ì•„ ì£¼ê¸°\n");
-    menu_map[3] = 3;
-    menu_idx = 4;
-  } else if (MouseToy == 1) {
-    printf("  2. ì¥ë‚œê° ì¥ë¡œ ë†€ì•„ì£¼ê¸°\n");
-    menu_map[2] = 2;
-    menu_idx = 3;
-  } else if (RazerPointer == 1) {
-    printf("  2. ë ˆì´ì €ë¡œ í¬ì¸í„°ë¡œ ë†€ì•„ ì£¼ê¸°\n");
-    menu_map[2] = 3;
-    menu_idx = 3;
-  }
-  printf(">>");
-  scanf_s("%d", &choice);
-  if (choice < 0 || choice >= menu_idx) {
-    printf("ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.\n");
+void intro(char* CatName) {
+    printf("**** ¾ß¿ËÀÌ¿Í ¼öÇÁ****\n");
+    printf("      /\\_/\\\n");
+    printf(" /\\  / o o \\\n");
+    printf("//\\\\ \\~(*)~/\n");
+    printf("`  \\/   ^ /\n");
+    printf("   | \\|| ||\n");
+    printf("   \\ '|| ||\n");
+    printf("    \\)()-())\n\n");
+    printf("\n\n");
+    printf("¾ß¿ËÀÌÀÇ ÀÌ¸§À» Áö¾îÁÖ¼¼¿ä:");
+    scanf_s("%s", CatName, 10);
+    printf("¾ß¿ËÀÌÀÇ ÀÌ¸§Àº %sÀÔ´Ï´Ù.\n", CatName);
     sleep(2);
     system(CLEAR_CONSOLE);
-    return;
-  }
-  int action = menu_map[choice];
-  if (action == 0) {
-    int prevCF = CF;
-    if (CF > 0) CF--;
-    printf("%sì˜ ê¸°ë¶„ì´ ë‚˜ë¹ ì¡ŒìŠµë‹ˆë‹¤: %d->%d\n", CatName, prevCF, CF);
-    dice = RollDice();
-    if (dice <= 5) {
-      int prevRel = *Relationship;
-      if (*Relationship > 0) (*Relationship)--;
-      printf("ì§‘ì‚¬ì™€ì˜ ê´€ê³„ê°€ ë‚˜ë¹ ì§‘ë‹ˆë‹¤.\n");
-    }
-  } else if (action == 1) {
-    printf("%sì˜ ê¸°ë¶„ì€ ê·¸ëŒ€ë¡œì…ë‹ˆë‹¤: %d\n", CatName, CF);
-    dice = RollDice();
-    if (dice >= 5) {
-      if (*Relationship < 4) (*Relationship)++;
-      printf("ì§‘ì‚¬ì™€ì˜ ê´€ê³„ê°€ ì¢‹ì•„ì§‘ë‹ˆë‹¤.\n");
-    }
-  } else if (action == 2) {
-    int prevCF = CF;
-    if (CF < 3) CF++;
-    printf(
-        "ì¥ë‚œê° ì¥ë¡œ %sì™€ ë†€ì•„ì£¼ì—ˆìŠµë‹ˆë‹¤. %sì˜ ê¸°ë¶„ì´ ì¡°ê¸ˆ ì¢‹ì•„ì¡ŒìŠµë‹ˆë‹¤: "
-        "%d->%d\n",
-        CatName, CatName, prevCF, CF);
-    dice = RollDice();
-    if (dice >= 4) {
-      if (*Relationship < 4) (*Relationship)++;
-      printf("ì§‘ì‚¬ì™€ì˜ ê´€ê³„ê°€ ì¢‹ì•„ì§‘ë‹ˆë‹¤.\n");
-    }
-  } else if (action == 3) {
-    int prevCF = CF;
-    CF += 2;
-    if (CF > 3) CF = 3;
-    printf(
-        "ë ˆì´ì € í¬ì¸í„°ë¡œ %sì™€ ì‹ ë‚˜ê²Œ ë†€ì•„ ì£¼ì—ˆìŠµë‹ˆë‹¤. %sì˜ ê¸°ë¶„ì´ ê½¤ "
-        "ì¢‹ì•„ì¡ŒìŠµë‹ˆë‹¤: %d->%d\n",
-        CatName, CatName, prevCF, CF);
-    dice = RollDice();
-    if (dice >= 2) {
-      if (*Relationship < 4) (*Relationship)++;
-      printf("ì§‘ì‚¬ì™€ì˜ ê´€ê³„ê°€ ì¢‹ì•„ì§‘ë‹ˆë‹¤.\n");
-    }
-  }
-  sleep(2);
-  system(CLEAR_CONSOLE);
 }
 
-void CatRoom(int CatPosition, int *SoupCount, char *CatName, int CatTowerPos,
-             int ScratcherPos) {
-  for (int i = 0; i < ROOM_WIDTH + 2; i++) {
+void states(int SoupCount, int Relationship, int CP, int CF, char* CatName,
+    int lastProducedCP) {
+    printf("\n\n==================== ÇöÀç »óÅÂ ====================\n");
+    printf("ÇöÀç±îÁö ¸¸µç ¼öÇÁ: %d°³\n", SoupCount);
+    printf("º¸À¯ CP : %d Æ÷ÀÎÆ®\n", CP);
+    printf("%sÀÌ ±âºĞ(0~3): %d\n", CatName, CF);
+    switch (CF) {
+    case 0:
+        printf("  ±âºĞÀÌ ¸Å¿ì ³ª»Ş´Ï´Ù.\n");
+        break;
+    case 1:
+        printf("  ½É½ÉÇØÇÕ´Ï´Ù.\n");
+        break;
+    case 2:
+        printf("  ½Ä»§À» ±Á½À´Ï´Ù.\n");
+        break;
+    case 3:
+        printf("  °ñ°ñ¼ÛÀ» ºÎ¸¨´Ï´Ù.\n");
+        break;
+    }
+    printf("Áı»ç¿ÍÀÇ °ü°è(0~4): %d\n", Relationship);
+    switch (Relationship) {
+    case 0:
+        printf("  °ç¿¡ ¿À´Â °ÍÁ¶Â÷ ½È¾îÇÕ´Ï´Ù.\n");
+        break;
+    case 1:
+        printf("  °£½Ä ÀÚÆÇ±â Ãë±ŞÀÔ´Ï´Ù.\n");
+        break;
+    case 2:
+        printf("  ±×·°Àú·° ¾µ ¸¸ÇÑ Áı»çÀÔ´Ï´Ù.\n");
+        break;
+    case 3:
+        printf("  ÈÇ¸¢ÇÑ Áı»ç·Î ÀÎÁ¤ ¹Ş°í ÀÖ½À´Ï´Ù.\n");
+        break;
+    case 4:
+        printf("  Áı»ç ²­µüÁöÀÔ´Ï´Ù.\n");
+        break;
+    }
+    printf("%sÀÇ ±âºĞ°ú Ä£¹Ğµµ¿¡ µû¶ó¼­ CP°¡ %dÆ÷ÀÎÆ® »ı»ê µÇ¾ú½À´Ï´Ù.\n",
+        CatName, lastProducedCP);
+    printf("=================================================\n");
+    printf("\n\n");
+}
+
+void CatAction(int CatPosition, int* CF, int* CP, char* CatName,
+    int CatTowerPos, int ScratcherPos, int* prevCatPosition) {
+    if (CatPosition == HME_POS) {
+        if (*prevCatPosition != HME_POS) {
+        }
+        else {
+            if (*CF < 3) {
+                int before = *CF;
+                (*CF)++;
+                printf("%sÀº(´Â) Áı¿¡¼­ ½¬¸ç ±âºĞÀÌ Á¶±İ ³ª¾ÆÁ³½À´Ï´Ù. ±âºĞ: %d->%d\n",
+                    CatName, before, *CF);
+            }
+            else {
+                printf("%sÀº(´Â) Áı¿¡¼­ ½¬°í ÀÖ½À´Ï´Ù. ±âºĞÀº ÀÌ¹Ì ÃÖ°íÀÔ´Ï´Ù.\n",
+                    CatName);
+            }
+        }
+    }
+    else if (CatPosition == ScratcherPos) {
+        int before = *CF;
+        if (*CF < 3) (*CF)++;
+        printf("%sÀº(´Â) ½ºÅ©·¡Ã³¸¦ ±Ü°í ³î¾Ò½À´Ï´Ù.\n", CatName);
+        printf("±âºĞÀÌ Á¶±İ ÁÁ¾ÆÁ³½À´Ï´Ù: %d->%d\n", before, *CF);
+    }
+    else if (CatPosition == CatTowerPos) {
+        int before = *CF;
+        int after = *CF + 2;
+        if (after > 3) after = 3;
+        printf("%sÀº(´Â) Ä¹Å¸¿ö¸¦ ¶Ù¾î´Ù´Õ´Ï´Ù.\n", CatName);
+        printf("±âºĞÀÌ Á¦¹ı ÁÁ¾ÆÁ³½À´Ï´Ù: %d->%d\n", before, after);
+        *CF = after;
+    }
+    *prevCatPosition = CatPosition;
+}
+
+void interaction(char* CatName, int* Relationship) {
+    int choice;
+    int dice = RollDice();
+    int menu_idx = 2;
+    int menu_map[4];
+    printf("¾î¶² »óÈ£ÀÛ¿ëÀ» ÇÏ½Ã°Ú½À´Ï±î?\n");
+    printf("  0. ¾Æ¹«°Íµµ ÇÏÁö ¾ÊÀ½\n");
+    menu_map[0] = 0;
+    printf("  1. ±Ü¾î ÁÖ±â\n");
+    menu_map[1] = 1;
+    if (MouseToy == 1 && RazerPointer == 1) {
+        printf("  2. Àå³­°¨ Áã·Î ³î¾ÆÁÖ±â\n");
+        menu_map[2] = 2;
+        printf("  3. ·¹ÀÌÀú·Î Æ÷ÀÎÅÍ·Î ³î¾Æ ÁÖ±â\n");
+        menu_map[3] = 3;
+        menu_idx = 4;
+    }
+    else if (MouseToy == 1) {
+        printf("  2. Àå³­°¨ Áã·Î ³î¾ÆÁÖ±â\n");
+        menu_map[2] = 2;
+        menu_idx = 3;
+    }
+    else if (RazerPointer == 1) {
+        printf("  2. ·¹ÀÌÀú·Î Æ÷ÀÎÅÍ·Î ³î¾Æ ÁÖ±â\n");
+        menu_map[2] = 3;
+        menu_idx = 3;
+    }
+    printf(">>");
+    scanf_s("%d", &choice);
+    if (choice < 0 || choice >= menu_idx) {
+        printf("Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.\n");
+        sleep(2);
+        system(CLEAR_CONSOLE);
+        return;
+    }
+    int action = menu_map[choice];
+    if (action == 0) {
+        int prevCF = CF;
+        if (CF > 0) CF--;
+        printf("%sÀÇ ±âºĞÀÌ ³ªºüÁ³½À´Ï´Ù: %d->%d\n", CatName, prevCF, CF);
+        dice = RollDice();
+        if (dice <= 5) {
+            int prevRel = *Relationship;
+            if (*Relationship > 0) (*Relationship)--;
+            printf("Áı»ç¿ÍÀÇ °ü°è°¡ ³ªºüÁı´Ï´Ù.\n");
+        }
+    }
+    else if (action == 1) {
+        printf("%sÀÇ ±âºĞÀº ±×´ë·ÎÀÔ´Ï´Ù: %d\n", CatName, CF);
+        dice = RollDice();
+        if (dice >= 5) {
+            if (*Relationship < 4) (*Relationship)++;
+            printf("Áı»ç¿ÍÀÇ °ü°è°¡ ÁÁ¾ÆÁı´Ï´Ù.\n");
+        }
+    }
+    else if (action == 2) {
+        int prevCF = CF;
+        if (CF < 3) CF++;
+        printf(
+            "Àå³­°¨ Áã·Î %s¿Í ³î¾ÆÁÖ¾ú½À´Ï´Ù. %sÀÇ ±âºĞÀÌ Á¶±İ ÁÁ¾ÆÁ³½À´Ï´Ù: "
+            "%d->%d\n",
+            CatName, CatName, prevCF, CF);
+        dice = RollDice();
+        if (dice >= 4) {
+            if (*Relationship < 4) (*Relationship)++;
+            printf("Áı»ç¿ÍÀÇ °ü°è°¡ ÁÁ¾ÆÁı´Ï´Ù.\n");
+        }
+    }
+    else if (action == 3) {
+        int prevCF = CF;
+        CF += 2;
+        if (CF > 3) CF = 3;
+        printf(
+            "·¹ÀÌÀú Æ÷ÀÎÅÍ·Î %s¿Í ½Å³ª°Ô ³î¾Æ ÁÖ¾ú½À´Ï´Ù. %sÀÇ ±âºĞÀÌ ²Ï "
+            "ÁÁ¾ÆÁ³½À´Ï´Ù: %d->%d\n",
+            CatName, CatName, prevCF, CF);
+        dice = RollDice();
+        if (dice >= 2) {
+            if (*Relationship < 4) (*Relationship)++;
+            printf("Áı»ç¿ÍÀÇ °ü°è°¡ ÁÁ¾ÆÁı´Ï´Ù.\n");
+        }
+    }
+    sleep(2);
+    system(CLEAR_CONSOLE);
+}
+
+void CatRoom(int CatPosition, int* SoupCount, char* CatName, int CatTowerPos,
+    int ScratcherPos) {
+    for (int i = 0; i < ROOM_WIDTH + 2; i++) {
+        printf("#");
+    }
+    printf("\n#");
+    for (int i = 0; i < ROOM_WIDTH; i++) {
+        if (i == HME_POS) {
+            printf("H");
+        }
+        else if (i == BWL_PO) {
+            printf("B");
+        }
+        else if (CatTower && i == CatTowerPos) {
+            printf("T");
+        }
+        else if (Scratcher && i == ScratcherPos) {
+            printf("S");
+        }
+        else {
+            printf(" ");
+        }
+    }
+    printf("#\n");
+
     printf("#");
-  }
-  printf("\n#");
-  for (int i = 0; i < ROOM_WIDTH; i++) {
-    if (i == HME_POS) {
-      printf("H");
-    } else if (i == BWL_PO) {
-      printf("B");
-    } else if (CatTower && i == CatTowerPos) {
-      printf("T");
-    } else if (Scratcher && i == ScratcherPos) {
-      printf("S");
-    } else {
-      printf(" ");
+    for (int i = 0; i < ROOM_WIDTH; i++) {
+        if (i < CatPosition) {
+            printf(".");
+        }
+        else if (i == CatPosition) {
+            printf("C");
+        }
+        else {
+            printf(" ");
+        }
     }
-  }
-  printf("#\n");
+    printf("#\n");
 
-  printf("#");
-  for (int i = 0; i < ROOM_WIDTH; i++) {
-    if (i < CatPosition) {
-      printf(".");
-    } else if (i == CatPosition) {
-      printf("C");
-    } else {
-      printf(" ");
+    for (int i = 0; i < ROOM_WIDTH + 2; i++) {
+        printf("#");
     }
-  }
-  printf("#\n");
+    printf("\n");
 
-  for (int i = 0; i < ROOM_WIDTH + 2; i++) {
-    printf("#");
-  }
-  printf("\n");
-
-  printf("\n");
-  if (CatPosition == HME_POS) {
-    printf("%sì€(ëŠ”) ìì‹ ì˜ ì§‘ì—ì„œ í¸ì•ˆí•¨ì„ ëŠë‚ë‹ˆë‹¤.\n", CatName);
-  }
-
-  if (CatPosition == BWL_PO) {
-    const char *selectedSoup;
-    int soupType = rand() % 3;
-    if (soupType == 0) {
-      selectedSoup = "ê°ì ìˆ˜í”„";
-    } else if (soupType == 1) {
-      selectedSoup = "ì–‘ì†¡ì´ ìˆ˜í”„";
-    } else {
-      selectedSoup = "ë¸Œë¡œì½œë¦¬ ìˆ˜í”„";
+    printf("\n");
+    if (CatPosition == HME_POS) {
+        printf("%sÀº(´Â) ÀÚ½ÅÀÇ Áı¿¡¼­ Æí¾ÈÇÔÀ» ´À³§´Ï´Ù.\n", CatName);
     }
-    printf("ì•¼ì˜¹ì´ê°€ %së¥¼ ë§Œë“¤ì—ˆìŠµë‹ˆë‹¤!\n", selectedSoup);
-    (*SoupCount)++;
-  }
+
+    if (CatPosition == BWL_PO) {
+        const char* selectedSoup;
+        int soupType = rand() % 3;
+        if (soupType == 0) {
+            selectedSoup = "°¨ÀÚ ¼öÇÁ";
+        }
+        else if (soupType == 1) {
+            selectedSoup = "¾ç¼ÛÀÌ ¼öÇÁ";
+        }
+        else {
+            selectedSoup = "ºê·ÎÄİ¸® ¼öÇÁ";
+        }
+        printf("¾ß¿ËÀÌ°¡ %s¸¦ ¸¸µé¾ú½À´Ï´Ù!\n", selectedSoup);
+        (*SoupCount)++;
+    }
 }
 
-void Catmove(int *CatPosition, int Relationship, int *CF, char *CatName,
-             int Scratcher, int CatTower) {
-  printf("6-2: ì£¼ì‚¬ìœ„ ëˆˆì´ %dì´í•˜ë©´ ê·¸ëƒ¥ ê¸°ë¶„ì´ ë‚˜ë¹ ì§‘ë‹ˆë‹¤.\n",
-         6 - Relationship);
-  printf("ì£¼ì‚¬ìœ„ë¥¼ êµ´ë¦½ë‹ˆë‹¤. ë˜ë¥´ë¥µ...\n");
-  int dice = RollDice();
-  sleep(1);
-  printf("%dì´(ê°€) ë‚˜ì™”ìŠµë‹ˆë‹¤!\n", dice);
-  if (dice >= 6 - Relationship && *CatPosition < ROOM_WIDTH - 1) {
-    (*CatPosition)++;
-    printf("ëƒ„ë¹„ ìª½ìœ¼ë¡œ ì›€ì§ì…ë‹ˆë‹¤.\n");
-  } else if (*CatPosition > 0) {
-    (*CatPosition)--;
-    printf("ì§‘ ìª½ìœ¼ë¡œ ì›€ì§ì…ë‹ˆë‹¤.\n");
-  }
-  if (dice <= 6 - Relationship) {
-    printf("%sì˜ ê¸°ë¶„ì´ ë‚˜ë¹ ì§‘ë‹ˆë‹¤: %d->", CatName, *CF);
-    if (*CF > 0) {
-      (*CF)--;
-      printf("%d\n", *CF);
-    } else {
-      printf("í™”ê°€ ë§ì´ ë‚˜ìˆëŠ” ìƒíƒœì…ë‹ˆë‹¤.\n");
+void Catmove(int* CatPosition, int Relationship, int* CF, char* CatName,
+    int Scratcher, int CatTower) {
+    printf("6-2: ÁÖ»çÀ§ ´«ÀÌ %dÀÌÇÏ¸é ±×³É ±âºĞÀÌ ³ªºüÁı´Ï´Ù.\n",
+        6 - Relationship);
+    printf("ÁÖ»çÀ§¸¦ ±¼¸³´Ï´Ù. ¶Ç¸£¸¤...\n");
+    int dice = RollDice();
+    sleep(1);
+    printf("%dÀÌ(°¡) ³ª¿Ô½À´Ï´Ù!\n", dice);
+    if (dice >= 6 - Relationship && *CatPosition < ROOM_WIDTH - 1) {
+        (*CatPosition)++;
+        printf("³¿ºñ ÂÊÀ¸·Î ¿òÁ÷ÀÔ´Ï´Ù.\n");
     }
-  }
-  if (*CF == 0) {
-    printf("ê¸°ë¶„ì´ ë§¤ìš° ë‚˜ìœ %sì€(ëŠ”) ì§‘ìœ¼ë¡œ í–¥í•©ë‹ˆë‹¤.\n", CatName);
-  } else if (*CF == 1) {
-    printf("%sì€(ëŠ”) ì‹¬ì‹¬í•´ì„œ ìŠ¤í¬ë˜ì²˜ ìª½ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.\n", CatName);
-    if (CatTower == 0 && Scratcher == 0) {
-      printf("ë†€ ê±°ë¦¬ê°€ ì—†ì–´ì„œ ê¸°ë¶„ì´ ë§¤ìš° ë‚˜ë¹ ì§‘ë‹ˆë‹¤.");
-      (*CF)--;
+    else if (*CatPosition > 0) {
+        (*CatPosition)--;
+        printf("Áı ÂÊÀ¸·Î ¿òÁ÷ÀÔ´Ï´Ù.\n");
     }
-  } else if (*CF == 2) {
-    printf("%sì€(ëŠ”) ê¸°ë¶„ì¢‹ê²Œ ì‹ë¹µì„ êµ½ê³  ìˆìŠµë‹ˆë‹¤.\n", CatName);
-  } else if (*CF == 3) {
-    printf("%sì€(ëŠ”) ê³¨ê³¨ì†¡ì„ ë¶€ë¥´ë©° ìˆ˜í”„ë¥¼ ë§Œë“¤ëŸ¬ ê°‘ë‹ˆë‹¤.\n", CatName);
-  }
+    if (dice <= 6 - Relationship) {
+        printf("%sÀÇ ±âºĞÀÌ ³ªºüÁı´Ï´Ù: %d->", CatName, *CF);
+        if (*CF > 0) {
+            (*CF)--;
+            printf("%d\n", *CF);
+        }
+        else {
+            printf("È­°¡ ¸¹ÀÌ ³ªÀÖ´Â »óÅÂÀÔ´Ï´Ù.\n");
+        }
+    }
+    if (*CF == 0) {
+        printf("±âºĞÀÌ ¸Å¿ì ³ª»Û %sÀº(´Â) ÁıÀ¸·Î ÇâÇÕ´Ï´Ù.\n", CatName);
+    }
+    else if (*CF == 1) {
+        printf("%sÀº(´Â) ½É½ÉÇØ¼­ ½ºÅ©·¡Ã³ ÂÊÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù.\n", CatName);
+        if (CatTower == 0 && Scratcher == 0) {
+            printf("³î °Å¸®°¡ ¾ø¾î¼­ ±âºĞÀÌ ¸Å¿ì ³ªºüÁı´Ï´Ù.");
+            (*CF)--;
+        }
+    }
+    else if (*CF == 2) {
+        printf("%sÀº(´Â) ±âºĞÁÁ°Ô ½Ä»§À» ±Á°í ÀÖ½À´Ï´Ù.\n", CatName);
+    }
+    else if (*CF == 3) {
+        printf("%sÀº(´Â) °ñ°ñ¼ÛÀ» ºÎ¸£¸ç ¼öÇÁ¸¦ ¸¸µé·¯ °©´Ï´Ù.\n", CatName);
+    }
 }
 
-void shop(int *CP, int *MouseToy, int *RazerPointer, int *Scratcher,
-          int *CatTower, int *ScratcherPos, int *CatTowerPos) {
-  int buy = -1;
-  while (1) {
-    printf("ìƒì ì—ì„œ ë¬¼ê±´ì„ ì‚´ ìˆ˜ ìˆìŠµë‹ˆë‹¤.\n");
-    printf("ì–´ë–¤ ë¬¼ê±´ì„ êµ¬ë§¤í• ê¹Œìš”?\n");
-    printf("0. ì•„ë¬´ê²ƒë„ ì‚¬ì§€ ì•ŠëŠ”ë‹¤.\n");
-    printf("1. ì¥ë‚œê° ì¥ : 1CP%s\n", *MouseToy ? " (í’ˆì ˆ)" : "");
-    printf("2. ë ˆì´ì € í¬ì¸í„° : 2CP%s\n", *RazerPointer ? " (í’ˆì ˆ)" : "");
-    printf("3. ìŠ¤í¬ë˜ì²˜: 4 CP%s\n", *Scratcher ? " (í’ˆì ˆ)" : "");
-    printf("4. ìº£ íƒ€ì›Œ: 6CP%s\n", *CatTower ? " (í’ˆì ˆ)" : "");
-    printf(">> ");
-    scanf_s("%d", &buy);
+void shop(int* CP, int* MouseToy, int* RazerPointer, int* Scratcher,
+    int* CatTower, int* ScratcherPos, int* CatTowerPos) {
+    int buy = -1;
+    while (1) {
+        printf("»óÁ¡¿¡¼­ ¹°°ÇÀ» »ì ¼ö ÀÖ½À´Ï´Ù.\n");
+        printf("¾î¶² ¹°°ÇÀ» ±¸¸ÅÇÒ±î¿ä?\n");
+        printf("0. ¾Æ¹«°Íµµ »çÁö ¾Ê´Â´Ù.\n");
+        printf("1. Àå³­°¨ Áã : 1CP%s\n", *MouseToy ? " (Ç°Àı)" : "");
+        printf("2. ·¹ÀÌÀú Æ÷ÀÎÅÍ : 2CP%s\n", *RazerPointer ? " (Ç°Àı)" : "");
+        printf("3. ½ºÅ©·¡Ã³: 4 CP%s\n", *Scratcher ? " (Ç°Àı)" : "");
+        printf("4. Ä¹ Å¸¿ö: 6CP%s\n", *CatTower ? " (Ç°Àı)" : "");
+        printf(">> ");
+        scanf_s("%d", &buy);
 
-    if (buy < 0 || buy > 4) {
-      printf("ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤. ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”.\n");
-      continue;
-    }
-    if (buy == 0) break;
+        if (buy < 0 || buy > 4) {
+            printf("Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä.\n");
+            continue;
+        }
+        if (buy == 0) break;
 
-    if (buy == 1) {
-      if (*MouseToy) {
-        printf("ì¥ë‚œê° ì¥ë¥¼ ì´ë¯¸êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤.\n");
-      } else if (*CP < 1) {
-        printf("CPê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.\n");
-      } else {
-        (*CP) -= 1;
-        *MouseToy = 1;
-        printf("ì¥ë‚œê° ì¥ë¥¼ êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤.\n");
-        printf("ë³´ìœ CP %d í¬ì¸íŠ¸\n", *CP);
-      }
-      break;
-    } else if (buy == 2) {
-      if (*RazerPointer) {
-        printf("ë ˆì´ì € í¬ì¸í„°ë¥¼ ì´ë¯¸êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤.\n");
-      } else if (*CP < 2) {
-        printf("CPê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.\n");
-      } else {
-        (*CP) -= 2;
-        *RazerPointer = 1;
-        printf("ë ˆì´ì € í¬ì¸í„°ë¥¼ êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤.\n");
-        printf("ë³´ìœ CP %d í¬ì¸íŠ¸\n", *CP);
-      }
-      break;
-    } else if (buy == 3) {
-      if (*Scratcher) {
-        printf("ìŠ¤í¬ë˜ì²˜ë¥¼ ì´ë¯¸êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤.\n");
-      } else if (*CP < 4) {
-        printf("CPê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.\n");
-      } else {
-        (*CP) -= 4;
-        *Scratcher = 1;
-        int pos;
-        do {
-          pos = rand() % ROOM_WIDTH;
-        } while (pos == HME_POS || pos == BWL_PO ||
-                 (*CatTower && pos == *CatTowerPos));
-        *ScratcherPos = pos;
-        printf("ìŠ¤í¬ë˜ì²˜ë¥¼ êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤.\n");
-        printf("ë³´ìœ CP %d í¬ì¸íŠ¸\n", *CP);
-      }
-      break;
-    } else if (buy == 4) {
-      if (*CatTower) {
-        printf("ìº£ íƒ€ì›Œë¥¼ ì´ë¯¸êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤.\n");
-      } else if (*CP < 6) {
-        printf("CPê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.\n");
-      } else {
-        (*CP) -= 6;
-        *CatTower = 1;
-        int pos;
-        do {
-          pos = rand() % ROOM_WIDTH;
-        } while (pos == HME_POS || pos == BWL_PO ||
-                 (*Scratcher && pos == *ScratcherPos));
-        *CatTowerPos = pos;
-        printf("ìº£ íƒ€ì›Œë¥¼ êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤.\n");
-        printf("ë³´ìœ CP %d í¬ì¸íŠ¸\n", *CP);
-      }
-      break;
+        if (buy == 1) {
+            if (*MouseToy) {
+                printf("Àå³­°¨ Áã¸¦ ÀÌ¹Ì±¸¸ÅÇß½À´Ï´Ù.\n");
+            }
+            else if (*CP < 1) {
+                printf("CP°¡ ºÎÁ·ÇÕ´Ï´Ù.\n");
+            }
+            else {
+                (*CP) -= 1;
+                *MouseToy = 1;
+                printf("Àå³­°¨ Áã¸¦ ±¸¸ÅÇß½À´Ï´Ù.\n");
+                printf("º¸À¯CP %d Æ÷ÀÎÆ®\n", *CP);
+            }
+            break;
+        }
+        else if (buy == 2) {
+            if (*RazerPointer) {
+                printf("·¹ÀÌÀú Æ÷ÀÎÅÍ¸¦ ÀÌ¹Ì±¸¸ÅÇß½À´Ï´Ù.\n");
+            }
+            else if (*CP < 2) {
+                printf("CP°¡ ºÎÁ·ÇÕ´Ï´Ù.\n");
+            }
+            else {
+                (*CP) -= 2;
+                *RazerPointer = 1;
+                printf("·¹ÀÌÀú Æ÷ÀÎÅÍ¸¦ ±¸¸ÅÇß½À´Ï´Ù.\n");
+                printf("º¸À¯CP %d Æ÷ÀÎÆ®\n", *CP);
+            }
+            break;
+        }
+        else if (buy == 3) {
+            if (*Scratcher) {
+                printf("½ºÅ©·¡Ã³¸¦ ÀÌ¹Ì±¸¸ÅÇß½À´Ï´Ù.\n");
+            }
+            else if (*CP < 4) {
+                printf("CP°¡ ºÎÁ·ÇÕ´Ï´Ù.\n");
+            }
+            else {
+                (*CP) -= 4;
+                *Scratcher = 1;
+                int pos;
+                do {
+                    pos = rand() % ROOM_WIDTH;
+                } while (pos == HME_POS || pos == BWL_PO ||
+                    (*CatTower && pos == *CatTowerPos));
+                *ScratcherPos = pos;
+                printf("½ºÅ©·¡Ã³¸¦ ±¸¸ÅÇß½À´Ï´Ù.\n");
+                printf("º¸À¯CP %d Æ÷ÀÎÆ®\n", *CP);
+            }
+            break;
+        }
+        else if (buy == 4) {
+            if (*CatTower) {
+                printf("Ä¹ Å¸¿ö¸¦ ÀÌ¹Ì±¸¸ÅÇß½À´Ï´Ù.\n");
+            }
+            else if (*CP < 6) {
+                printf("CP°¡ ºÎÁ·ÇÕ´Ï´Ù.\n");
+            }
+            else {
+                (*CP) -= 6;
+                *CatTower = 1;
+                int pos;
+                do {
+                    pos = rand() % ROOM_WIDTH;
+                } while (pos == HME_POS || pos == BWL_PO ||
+                    (*Scratcher && pos == *ScratcherPos));
+                *CatTowerPos = pos;
+                printf("Ä¹ Å¸¿ö¸¦ ±¸¸ÅÇß½À´Ï´Ù.\n");
+                printf("º¸À¯CP %d Æ÷ÀÎÆ®\n", *CP);
+            }
+            break;
+        }
     }
-  }
 }
 
-void sudden_quest(char *CatName, int *CP) {
-  int answer, tries = 0;
-  int correct = rand() % 10 + 1;
-  printf("\n[ëŒë°œ í€˜ìŠ¤íŠ¸] %sê°€ ê°‘ìê¸° ìˆ¨ì€ ê°„ì‹ì„ ì°¾ìœ¼ë ¤ê³  í•©ë‹ˆë‹¤!\n", CatName);
-  printf("1~10 ì‚¬ì´ì— ê°„ì‹ì´ ìˆ¨ê²¨ì ¸ ìˆìŠµë‹ˆë‹¤. ë§ì¶œ ë•Œê¹Œì§€ ì…ë ¥í•˜ì„¸ìš”!\n");
-  while (1) {
-    printf("ì–´ë””ì— ìˆ¨ì—ˆì„ê¹Œìš”? >> ");
-    scanf_s("%d", &answer);
-    tries++;
-    if (answer == correct) {
-      printf("ì •ë‹µ! %dë²ˆì— ê°„ì‹ì´ ìˆì—ˆìŠµë‹ˆë‹¤! (%dë²ˆ ë§Œì— ì„±ê³µ)\n", correct,
-             tries);
-      printf("ë³´ìƒìœ¼ë¡œ CP 2í¬ì¸íŠ¸ë¥¼ ì–»ì—ˆìŠµë‹ˆë‹¤!\n");
-      *CP += 2;
-      break;
-    } else if (answer < correct) {
-      printf("ë” ë†’ì€ ë²ˆí˜¸ì— ìˆìŠµë‹ˆë‹¤!\n");
-    } else {
-      printf("ë” ë‚®ì€ ë²ˆí˜¸ì— ìˆìŠµë‹ˆë‹¤!\n");
+void sudden_quest(char* CatName, int* CP) {
+    int answer, tries = 0;
+    int correct = rand() % 10 + 1;
+    printf("\n[µ¹¹ß Äù½ºÆ®] %s°¡ °©ÀÚ±â ¼ûÀº °£½ÄÀ» Ã£À¸·Á°í ÇÕ´Ï´Ù!\n", CatName);
+    printf("1~10 »çÀÌ¿¡ °£½ÄÀÌ ¼û°ÜÁ® ÀÖ½À´Ï´Ù. ¸ÂÃâ ¶§±îÁö ÀÔ·ÂÇÏ¼¼¿ä!\n");
+    while (1) {
+        printf("¾îµğ¿¡ ¼û¾úÀ»±î¿ä? >> ");
+        scanf_s("%d", &answer);
+        tries++;
+        if (answer == correct) {
+            printf("Á¤´ä! %d¹ø¿¡ °£½ÄÀÌ ÀÖ¾ú½À´Ï´Ù! (%d¹ø ¸¸¿¡ ¼º°ø)\n", correct,
+                tries);
+            printf("º¸»óÀ¸·Î CP 2Æ÷ÀÎÆ®¸¦ ¾ò¾ú½À´Ï´Ù!\n");
+            *CP += 2;
+            break;
+        }
+        else if (answer < correct) {
+            printf("´õ ³ôÀº ¹øÈ£¿¡ ÀÖ½À´Ï´Ù!\n");
+        }
+        else {
+            printf("´õ ³·Àº ¹øÈ£¿¡ ÀÖ½À´Ï´Ù!\n");
+        }
     }
-  }
-  sleep(2);
-  system(CLEAR_CONSOLE);
+    sleep(2);
+    system(CLEAR_CONSOLE);
 }
 
 int main(void) {
-  char CatName[10];
-  int SoupCount = 0, Relationship = 2, CatPosition = 0, CP = 0;
-  int CatTowerPos, ScratcherPos;
-  int prevCatPosition = HME_POS;
-  int turn = 0;
-  srand((unsigned int)time(NULL));
-  do {
-    CatTowerPos = rand() % ROOM_WIDTH;
-  } while (CatTowerPos == HME_POS || CatTowerPos == BWL_PO);
-  do {
-    ScratcherPos = rand() % ROOM_WIDTH;
-  } while (ScratcherPos == HME_POS || ScratcherPos == BWL_PO ||
-           ScratcherPos == CatTowerPos);
-  intro(CatName);
-  while (1) {
-    turn++;
-    int producedCP = (CF > 1 ? CF - 1 : 0) + Relationship;
-    CP += producedCP;
-    states(SoupCount, Relationship, CP, CF, CatName, producedCP);
-    if (turn == 3) sudden_quest(CatName, &CP);
-    shop(&CP, &MouseToy, &RazerPointer, &Scratcher, &CatTower, &ScratcherPos,
-         &CatTowerPos);
-    Catmove(&CatPosition, Relationship, &CF, CatName, Scratcher, CatTower);
-    printf("\n");
-    CatRoom(CatPosition, &SoupCount, CatName, CatTowerPos, ScratcherPos);
-    printf("\n");
-    CatAction(CatPosition, &CF, &CP, CatName, CatTowerPos, ScratcherPos,
-              &prevCatPosition);
-    interaction(CatName, &Relationship);
-    sleep(1);
-    system(CLEAR_CONSOLE);
-  }
-  return 0;
+    char CatName[10];
+    int SoupCount = 0, Relationship = 2, CatPosition = 0, CP = 0;
+    int CatTowerPos, ScratcherPos;
+    int prevCatPosition = HME_POS;
+    int turn = 0;
+    srand((unsigned int)time(NULL));
+    do {
+        CatTowerPos = rand() % ROOM_WIDTH;
+    } while (CatTowerPos == HME_POS || CatTowerPos == BWL_PO);
+    do {
+        ScratcherPos = rand() % ROOM_WIDTH;
+    } while (ScratcherPos == HME_POS || ScratcherPos == BWL_PO ||
+        ScratcherPos == CatTowerPos);
+    intro(CatName);
+    while (1) {
+        turn++;
+        int producedCP = (CF > 1 ? CF - 1 : 0) + Relationship;
+        CP += producedCP;
+        states(SoupCount, Relationship, CP, CF, CatName, producedCP);
+        if (turn == 3) sudden_quest(CatName, &CP);
+        shop(&CP, &MouseToy, &RazerPointer, &Scratcher, &CatTower, &ScratcherPos,
+            &CatTowerPos);
+        Catmove(&CatPosition, Relationship, &CF, CatName, Scratcher, CatTower);
+        printf("\n");
+        CatRoom(CatPosition, &SoupCount, CatName, CatTowerPos, ScratcherPos);
+        printf("\n");
+        CatAction(CatPosition, &CF, &CP, CatName, CatTowerPos, ScratcherPos,
+            &prevCatPosition);
+        interaction(CatName, &Relationship);
+        sleep(1);
+        system(CLEAR_CONSOLE);
+    }
+    return 0;
 }
-// ë
+// ³¡
